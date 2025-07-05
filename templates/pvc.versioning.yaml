@@ -1,0 +1,16 @@
+{{- if .Values.persistence.versioning.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "versitygw.fullname" . }}-versioning
+  labels:
+    {{- include "versitygw.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.persistence.versioning.storageClass | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.versioning.size }}
+---
+{{- end }}

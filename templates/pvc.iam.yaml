@@ -1,0 +1,16 @@
+{{- if .Values.persistence.iam.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "versitygw.fullname" . }}-iam
+  labels:
+    {{- include "versitygw.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.persistence.iam.storageClass | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.iam.size }}
+---
+{{- end }}

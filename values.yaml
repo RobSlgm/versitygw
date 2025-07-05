@@ -49,10 +49,29 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+versitygw:
+  admin:
+    s3Credentials:
+      accessKeyId:
+        name: versitygw-admin-secret
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: versitygw-admin-secret
+        key: ACCESS_SECRET_KEY
+      region:
+        name: versitygw-admin-secret
+        key: S3_REGION
+
+  config: {}
+
 persistence:
   data:
     enabled: true
     storageClass: "default"
+    size: 1Gi
+  versioning:
+    enabled: false
+    storageClass: ""
     size: 1Gi
   iam:
     enabled: false
@@ -102,11 +121,12 @@ resources: {}
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
   httpGet:
-    path: /
+    path: /health
     port: http
+  periodSeconds: 30
 readinessProbe:
   httpGet:
-    path: /
+    path: /health
     port: http
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/

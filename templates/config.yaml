@@ -1,0 +1,12 @@
+{{- if .Values.versitygw.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "versitygw.fullname" . }}-config
+  labels:
+    {{- include "versitygw.labels" . | nindent 4 }}
+data:
+    {{- with .Values.versitygw.config }}
+        {{- toYaml . | nindent 2 }}
+    {{- end }}
+{{- end }}

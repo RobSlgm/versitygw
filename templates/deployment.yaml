@@ -5,6 +5,8 @@ metadata:
   labels:
     {{- include "versitygw.labels" . | nindent 4 }}
 spec:
+  strategy:
+    type: Recreate
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
@@ -13,8 +15,9 @@ spec:
       {{- include "versitygw.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
@@ -41,32 +44,30 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args: ["posix", "/mnt/data"]
-          #  --chuid                 chown newly created files and directories to client account UID (default: false) [$VGW_CHOWN_UID]
-          #  --chgid                 chown newly created files and directories to client account GID (default: false) [$VGW_CHOWN_GID]
-          #  --bucketlinks           allow symlinked directories at bucket level to be treated as buckets (default: false) [$VGW_BUCKET_LINKS]
-          #  --versioning-dir value  the directory path to enable bucket versioning [$VGW_VERSIONING_DIR]
-          #  --dir-perms value       default directory permissions for new directories (default: 0755) [$VGW_DIR_PERMS]
-          #  --sidecar value         use provided sidecar directory to store metadata [$VGW_META_SIDECAR]
-          #  --nometa                disable metadata storage (default: false) [$VGW_META_NONE]
-          #  --disableotmp           disable O_TMPFILE support for new objects (default: false) [$VGW_DISABLE_OTMP]
-          # GLOBAL:
-          #  --access value, -a value    root user access key [$ROOT_ACCESS_KEY_ID, $ROOT_ACCESS_KEY]
-          #  --secret value, -s value    root user secret access key [$ROOT_SECRET_ACCESS_KEY, $ROOT_SECRET_KEY]
-          #  --region value, -r value    s3 region string (default: "us-east-1") [$VGW_REGION]
-          #  --iam-dir value             if defined, run internal iam service within this directory [$VGW_IAM_DIR]
-          #  --health value              health check endpoint path. Health endpoint will be configured on GET http method: GET <health>
-          #                              NOTICE: the path has to be specified with '/'. e.g /health [$VGW_HEALTH]          
           env:
-          - name: ROOT_ACCESS_KEY_ID 
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.versitygw.admin.s3Credentials.accessKeyId.name }}
-                key: {{ .Values.versitygw.admin.s3Credentials.accessKeyId.key }}
-          - name: ROOT_SECRET_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.versitygw.admin.s3Credentials.secretAccessKey.name }}
-                key: {{ .Values.versitygw.admin.s3Credentials.secretAccessKey.key }}            
+            - name: ROOT_ACCESS_KEY_ID 
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.versitygw.admin.s3Credentials.accessKeyId.name }}
+                  key: {{ .Values.versitygw.admin.s3Credentials.accessKeyId.key }}
+            - name: ROOT_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.versitygw.admin.s3Credentials.secretAccessKey.name }}
+                  key: {{ .Values.versitygw.admin.s3Credentials.secretAccessKey.key }}
+            {{- if .Values.persistence.versioning.enabled }}
+            - name: VGW_VERSIONING_DIR
+              value: /mnt/versioning
+            {{- end }}
+            {{- if .Values.persistence.iam.enabled }}
+            - name: VGW_IAM_DIR
+              value: /mnt/iam
+            {{- end }}
+            - name: VGW_HEALTH
+              value: "/health"
+          envFrom:
+            - configMapRef:
+                name: {{ include "versitygw.fullname" . }}-config      
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -85,7 +86,15 @@ spec:
           {{- end }}
           volumeMounts:
             - mountPath: /mnt/data
-              name: data-pvc              
+              name: data-pvc
+          {{- if .Values.persistence.iam.enabled }}
+            - mountPath: /mnt/iam
+              name: iam-pvc
+          {{- end }}                 
+          {{- if .Values.persistence.versioning.enabled }}
+            - mountPath: /mnt/versioning
+              name: versioning-pvc
+          {{- end }}    
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -93,6 +102,16 @@ spec:
         - name: data-pvc
           persistentVolumeClaim:
             claimName: {{ .Chart.Name }}-data
+      {{- if .Values.persistence.iam.enabled }}
+        - name: iam-pvc
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-iam
+      {{- end }}
+      {{- if .Values.persistence.versioning.enabled }}
+        - name: versioning-pvc
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-versioning
+      {{- end }}
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
