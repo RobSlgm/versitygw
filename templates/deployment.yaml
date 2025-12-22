@@ -65,11 +65,15 @@ spec:
             {{- end }}
             - name: VGW_HEALTH
               value: "/health"
+            {{- if .Values.versitygw.virtualDomain }}
+            - name: VGW_VIRTUAL_DOMAIN
+              value: {{ .Values.versitygw.virtualDomain }}
+            {{- end }}              
           envFrom:
             - configMapRef:
                 name: {{ include "versitygw.fullname" . }}-config      
           ports:
-            - name: http
+            - name: s3
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           {{- with .Values.livenessProbe }}
@@ -90,7 +94,7 @@ spec:
           {{- if .Values.persistence.iam.enabled }}
             - mountPath: /mnt/iam
               name: iam-pvc
-          {{- end }}                 
+          {{- end }}
           {{- if .Values.persistence.versioning.enabled }}
             - mountPath: /mnt/versioning
               name: versioning-pvc
