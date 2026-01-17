@@ -1,0 +1,79 @@
+# Helm chart for Versity S3 gateway <!-- omit in toc -->
+
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.badgesSection" . }}
+
+[{{ template "chart.description" . }}]({{ template "chart.homepage" . }})
+
+This repository contains a Helm chart to install [The Versity S3 Gateway](https://github.com/versity/versitygw).
+
+### Install the Chart
+
+To install the chart with the release name my-release:
+
+```shell
+helm install my-release oci://ghcr.io/robslgm/versitygw/versitygw
+```
+
+### Uninstalling the Chart
+
+To uninstall/delete the my-release deployment:
+
+```shell
+helm uninstall my-release
+```
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+# Configuration
+
+Original [documentation](https://github.com/versity/versitygw/wiki/Global-Options) of global options.
+
+All options with an enviroment variable (usually `$VGW_`):
+
+| option                   | description                                                                                               |
+| ------------------------ | --------------------------------------------------------------------------------------------------------- |
+| --chuid                  | chown newly created files and directories to client account UID (default: false) [$VGW_CHOWN_UID]         |
+| --chgid                  | chown newly created files and directories to client account GID (default: false) [$VGW_CHOWN_GID]         |
+| --bucketlinks            | allow symlinked directories at bucket level to be treated as buckets (default: false) [$VGW_BUCKET_LINKS] |
+| --versioning-dir value   | the directory path to enable bucket versioning [$VGW_VERSIONING_DIR]                                      |
+| --dir-perms value        | default directory permissions for new directories (default: 0755) [$VGW_DIR_PERMS]                        |
+| --sidecar value          | use provided sidecar directory to store metadata [$VGW_META_SIDECAR]                                      |
+| --nometa                 | disable metadata storage (default: false) [$VGW_META_NONE]                                                |
+| --disableotmp            | disable O_TMPFILE support for new objects (default: false) [$VGW_DISABLE_OTMP]                            |
+|                          | GLOBAL:                                                                                                   |
+| --access value, -a value | root user access key [$ROOT_ACCESS_KEY_ID, $ROOT_ACCESS_KEY]                                              |
+| --secret value, -s value | root user secret access key [$ROOT_SECRET_ACCESS_KEY, $ROOT_SECRET_KEY]                                   |
+| --region value, -r value | s3 region string (default: "us-east-1") [$VGW_REGION]                                                     |
+| --iam-dir value          | if defined, run internal iam service within this directory [$VGW_IAM_DIR]                                 |
+| --health value           | health check endpoint path. Health endpoint will be configured on GET http method: GET \<health\>         |
+|                          | NOTICE: the path has to be specified with '/'. e.g /health [$VGW_HEALTH]                                  |
+
+Add option to your `values.yaml`, as example
+
+~~~yaml
+versitygw:
+    config:
+        VGV_META_NONE: "true"        
+~~~
+
+All items under `versitygw.config` are passed as enviroment variables with following exceptions:
+
+| key | description |
+| --- | ----------- |
+| VGW_VERSIONING_DIR | Set by enabling the `persistence.versioning` |
+| VGW_IAM_DIR | Set by enabling the `persistence.iam` |
+| VGW_HEALTH | Set by default |
+| VGW_VIRTUAL_DOMAIN | Set by `versitygw.virtualDomain` |
+| ROOT_ACCESS_KEY_ID | Set by `versitygw.admin` |
+| ROOT_SECRET_ACCESS_KEY | Set by `versitygw.admin` |
+
+
+{{ template "chart.valuesSection" . }}
+
+{{ template "chart.maintainersSection" . }}
+
+{{ template "chart.sourcesSection" . }}
+
+{{ template "helm-docs.versionFooter" . }}

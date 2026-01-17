@@ -1,37 +1,34 @@
-# Helm chart for Versity S3 gateway
+# Helm chart for Versity S3 gateway <!-- omit in toc -->
+
+
+
+![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square) 
+
+[Helm chart for Versity S3 gateway to a Posix backend](https://github.com/RobSlgm/versitygw)
 
 This repository contains a Helm chart to install [The Versity S3 Gateway](https://github.com/versity/versitygw).
 
-## Usage
+### Install the Chart
 
-### 1. Add the helm repository
-
-```shell
-helm repo add versitygw https://xxx/versitygw-helm
-helm repo update
-```
-
-### 2. Install a Chart
-
-To install a chart from this repository, use the following command:
+To install the chart with the release name my-release:
 
 ```shell
-helm install <release-name> versitygw/<chart-name>
+helm install my-release oci://ghcr.io/robslgm/versitygw/versitygw
 ```
 
-### 3. Customize Installation
+### Uninstalling the Chart
 
-You can customize the installation by passing in custom values via the `--set` flag or by using a `values.yaml` file:
+To uninstall/delete the my-release deployment:
 
 ```shell
-helm install <release-name> versitygw/<chart-name> --set key=value
+helm uninstall my-release
 ```
 
-or
+The command removes all the Kubernetes components associated with the chart and deletes the release.
 
-```shell
-helm install <release-name> versitygw/<chart-name> -f your-values.yaml
-```
+# Configuration
+
+Original [documentation](https://github.com/versity/versitygw/wiki/Global-Options) of global options.
 
 All options with an enviroment variable (usually `$VGW_`):
 
@@ -52,3 +49,96 @@ All options with an enviroment variable (usually `$VGW_`):
 | --iam-dir value          | if defined, run internal iam service within this directory [$VGW_IAM_DIR]                                 |
 | --health value           | health check endpoint path. Health endpoint will be configured on GET http method: GET \<health\>         |
 |                          | NOTICE: the path has to be specified with '/'. e.g /health [$VGW_HEALTH]                                  |
+
+Add option to your `values.yaml`, as example
+
+~~~yaml
+versitygw:
+    config:
+        VGV_META_NONE: "true"        
+~~~
+
+All items under `versitygw.config` are passed as enviroment variables with following exceptions:
+
+| key | description |
+| --- | ----------- |
+| VGW_VERSIONING_DIR | Set by enabling the `persistence.versioning` |
+| VGW_IAM_DIR | Set by enabling the `persistence.iam` |
+| VGW_HEALTH | Set by default |
+| VGW_VIRTUAL_DOMAIN | Set by `versitygw.virtualDomain` |
+| ROOT_ACCESS_KEY_ID | Set by `versitygw.admin` |
+| ROOT_SECRET_ACCESS_KEY | Set by `versitygw.admin` |
+
+
+## Values
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| affinity | object | `{}` |  |
+| autoscaling.enabled | bool | `false` |  |
+| autoscaling.maxReplicas | int | `100` |  |
+| autoscaling.minReplicas | int | `1` |  |
+| autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
+| fullnameOverride | string | `""` |  |
+| httpRoute | object | {} | Expose the service via gateway-api HTTPRoute Requires Gateway API resources and suitable controller installed within the cluster (see: https://gateway-api.sigs.k8s.io/guides/) |
+| httpRoute.enabled | bool | `false` | use either ingress or HTTPRoute (gateway API) |
+| httpRoute.hostnames | list | `["chart-example.local"]` | Hostnames matching HTTP header. |
+| httpRoute.parentRefs | list | `[{"name":"gateway","sectionName":"http"}]` | Which Gateways this Route is attached to. |
+| image.pullPolicy | string | `"IfNotPresent"` |  |
+| image.repository | string | `"versity/versitygw"` |  |
+| image.tag | string | `""` |  |
+| imagePullSecrets | list | `[]` |  |
+| ingress.annotations | object | `{}` |  |
+| ingress.className | string | `""` |  |
+| ingress.enabled | bool | `false` | use either ingress or HTTPRoute (gateway API) |
+| ingress.hosts[0].host | string | `"chart-example.local"` |  |
+| ingress.hosts[0].paths[0].path | string | `"/"` |  |
+| ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |
+| ingress.tls | list | `[]` |  |
+| livenessProbe.httpGet.path | string | `"/health"` |  |
+| livenessProbe.httpGet.port | string | `"s3"` |  |
+| livenessProbe.periodSeconds | int | `30` |  |
+| nameOverride | string | `""` |  |
+| nodeSelector | object | `{}` |  |
+| persistence | object | {} | Volumes for Versity GW. Required if enabled in the configuration. |
+| persistence.data | object | `{"enabled":true,"size":"1Gi","storageClass":"default"}` | Versity GW data |
+| persistence.iam | object | `{"enabled":false,"size":"1Gi","storageClass":""}` | IAM |
+| persistence.meta | object | `{"enabled":false,"size":"1Gi","storageClass":""}` | Metadata |
+| persistence.versioning | object | `{"enabled":false,"size":"1Gi","storageClass":""}` | Versioning |
+| podAnnotations | object | `{}` |  |
+| podLabels | object | `{}` |  |
+| podSecurityContext | object | `{}` |  |
+| readinessProbe.httpGet.path | string | `"/health"` |  |
+| readinessProbe.httpGet.port | string | `"s3"` |  |
+| replicaCount | int | `1` |  |
+| resources | object | `{}` |  |
+| securityContext | object | `{}` |  |
+| serviceAccount.annotations | object | `{}` |  |
+| serviceAccount.automount | bool | `true` |  |
+| serviceAccount.create | bool | `true` |  |
+| serviceAccount.name | string | `""` |  |
+| tolerations | list | `[]` |  |
+| versitygw | object | {} | Versity GW configuration |
+| versitygw.admin | object | {}   | Admin credentials |
+| versitygw.admin.s3Credentials | object | {} | S3 Credentials (supply as secret, by default ) |
+| versitygw.admin.s3Credentials.accessKeyId | object | {} | S3 admin username |
+| versitygw.admin.s3Credentials.accessKeyId.key | string | `"ACCESS_KEY_ID"` | key in secret |
+| versitygw.admin.s3Credentials.accessKeyId.name | string | `"versitygw-admin-secret"` | name of secret |
+| versitygw.admin.s3Credentials.region | object | {} | S3 admin region |
+| versitygw.admin.s3Credentials.region.key | string | `"S3_REGION"` | key in secret |
+| versitygw.admin.s3Credentials.region.name | string | `"versitygw-admin-secret"` | name of secret |
+| versitygw.admin.s3Credentials.secretAccessKey | object | {} | S3 admin access key |
+| versitygw.admin.s3Credentials.secretAccessKey.key | string | `"ACCESS_SECRET_KEY"` | key in secret |
+| versitygw.admin.s3Credentials.secretAccessKey.name | string | `"versitygw-admin-secret"` | name of secret |
+| versitygw.config | object | `{}` | Versity configuration options (see above) |
+
+
+
+## Source Code
+
+* <https://github.com/RobSlgm/versitygw>
+* <https://github.com/versity/versitygw>
+
+
+----------------------------------------------
+Autogenerated from chart metadata using [helm-docs v1.14.2](https://github.com/norwoodj/helm-docs/releases/v1.14.2)

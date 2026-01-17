@@ -49,40 +49,65 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# -- Versity GW configuration
+# @default -- {}
 versitygw:
+  # -- Admin credentials
+  # @default -- {}  
   admin:
+    # -- S3 Credentials (supply as secret, by default )
+    # @default -- {}
     s3Credentials:
+      # -- S3 admin username
+      # @default -- {}
       accessKeyId:
+        # -- name of secret
         name: versitygw-admin-secret
+        # -- key in secret
         key: ACCESS_KEY_ID
+      # -- S3 admin access key
+      # @default -- {}
       secretAccessKey:
+        # -- name of secret
         name: versitygw-admin-secret
+        # -- key in secret
         key: ACCESS_SECRET_KEY
+      # -- S3 admin region
+      # @default -- {}
       region:
+        # -- name of secret
         name: versitygw-admin-secret
+        # -- key in secret
         key: S3_REGION
-
+  # -- Versity configuration options (see above)
   config: {}
 
+# -- Volumes for Versity GW. Required if enabled in the configuration.
+# @default -- {}
 persistence:
+  # -- Versity GW data
   data:
     enabled: true
     storageClass: "default"
     size: 1Gi
+  # -- Versioning
   versioning:
     enabled: false
     storageClass: ""
     size: 1Gi
+  # -- IAM
   iam:
     enabled: false
     storageClass: ""
     size: 1Gi
+  # -- Metadata
   meta:
     enabled: false
     storageClass: ""
     size: 1Gi
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
+# @ignored
 service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
@@ -91,6 +116,7 @@ service:
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
+  # -- use either ingress or HTTPRoute (gateway API)
   enabled: false
   className: ""
   annotations: {}
@@ -109,20 +135,22 @@ ingress:
 # -- Expose the service via gateway-api HTTPRoute
 # Requires Gateway API resources and suitable controller installed within the cluster
 # (see: https://gateway-api.sigs.k8s.io/guides/)
+# @default -- {}
 httpRoute:
-  # HTTPRoute enabled.
+  # -- use either ingress or HTTPRoute (gateway API)
   enabled: false
   # HTTPRoute annotations.
   annotations: {}
-  # Which Gateways this Route is attached to.
+  # -- Which Gateways this Route is attached to.
   parentRefs:
   - name: gateway
     sectionName: http
     # namespace: default
-  # Hostnames matching HTTP header.
+  # -- Hostnames matching HTTP header.
   hostnames:
   - chart-example.local
   # List of rules and filters applied.
+  # @default -- {}  
   rules:
   - matches:
     - path:
@@ -176,6 +204,7 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
+# @ignored
 volumes: []
 # - name: foo
 #   secret:
@@ -183,6 +212,7 @@ volumes: []
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
+# @ignored
 volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"

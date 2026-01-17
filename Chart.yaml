@@ -1,13 +1,16 @@
 apiVersion: v2
 name: versitygw
 type: application
-description: Helm chart for Versity S3 gateway
-home: https://github.com/versity/versitygw
+description: Helm chart for Versity S3 gateway to a Posix backend
+home: https://github.com/RobSlgm/versitygw
 icon: https://github.com/versity/versitygw/raw/assets/assets/logo.svg
+sources: 
+  - https://github.com/RobSlgm/versitygw
+  - https://github.com/versity/versitygw
 keywords:
   - versitygw
   - self-hosted
   - s3
 
-version: 1.0.19
-appVersion: "v1.0.20"
+version: 1.1.0
+appVersion: "v1.1.0"
