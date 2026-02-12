@@ -131,6 +131,11 @@ All items under `versitygw.config` are passed as enviroment variables with follo
 | versitygw.admin.s3Credentials.secretAccessKey.key | string | `"ACCESS_SECRET_KEY"` | key in secret |
 | versitygw.admin.s3Credentials.secretAccessKey.name | string | `"versitygw-admin-secret"` | name of secret |
 | versitygw.config | object | `{}` | Versity configuration options (see above) |
+| webui | Experimental | {} | Webui |
+| webui.httpRoute.enabled | bool | `false` | use either ingress or HTTPRoute (gateway API) |
+| webui.httpRoute.hostnames | list | `["chart-example-explorer.local"]` | Hostnames matching HTTP header. |
+| webui.httpRoute.parentRefs | list | `[{"name":"gateway","sectionName":"http"}]` | Which Gateways this Route is attached to. |
+| webui.ingress.enabled | bool | `false` | use either ingress or HTTPRoute (gateway API) |
 
 
 

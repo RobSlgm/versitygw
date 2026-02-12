@@ -1,0 +1,18 @@
+
+{{- if .Values.webui.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "versitygw.fullname" . }}-webui
+  labels:
+    {{- include "versitygw.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.webui.type }}
+  ports:
+    - port: {{ .Values.webui.port }}
+      # targetPort: http
+      protocol: TCP
+      name: webui
+  selector:
+    {{- include "versitygw.selectorLabels" . | nindent 4 }}
+{{- end }}
