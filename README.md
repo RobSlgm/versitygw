@@ -2,7 +2,7 @@
 
 
 
-![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square) 
+![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.2.0](https://img.shields.io/badge/AppVersion-v1.2.0-informational?style=flat-square) 
 
 [Helm chart for Versity S3 gateway to a Posix backend](https://github.com/RobSlgm/versitygw)
 
@@ -13,7 +13,7 @@ This repository contains a Helm chart to install [The Versity S3 Gateway](https:
 To install the chart with the release name my-release:
 
 ```shell
-helm install my-release oci://ghcr.io/robslgm/versitygw/versitygw
+helm install my-release oci://ghcr.io/robslgm/charts/versitygw
 ```
 
 ### Uninstalling the Chart
