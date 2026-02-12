@@ -2,7 +2,7 @@
 
 
 
-![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square) 
+![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.2.0](https://img.shields.io/badge/AppVersion-v1.2.0-informational?style=flat-square) 
 
 [Helm chart for Versity S3 gateway to a Posix backend](https://github.com/RobSlgm/versitygw)
 
@@ -13,7 +13,7 @@ This repository contains a Helm chart to install [The Versity S3 Gateway](https:
 To install the chart with the release name my-release:
 
 ```shell
-helm install my-release oci://ghcr.io/robslgm/versitygw/versitygw
+helm install my-release oci://ghcr.io/robslgm/charts/versitygw
 ```
 
 ### Uninstalling the Chart
@@ -68,6 +68,8 @@ All items under `versitygw.config` are passed as enviroment variables with follo
 | VGW_VIRTUAL_DOMAIN | Set by `versitygw.virtualDomain` |
 | ROOT_ACCESS_KEY_ID | Set by `versitygw.admin` |
 | ROOT_SECRET_ACCESS_KEY | Set by `versitygw.admin` |
+| VGW_WEBUI_* | Set by webui.* |
+| VGW_CORS_ALLOW_ORIGIN | Set if webui is enabled |
 
 
 ## Values
@@ -131,6 +133,11 @@ All items under `versitygw.config` are passed as enviroment variables with follo
 | versitygw.admin.s3Credentials.secretAccessKey.key | string | `"ACCESS_SECRET_KEY"` | key in secret |
 | versitygw.admin.s3Credentials.secretAccessKey.name | string | `"versitygw-admin-secret"` | name of secret |
 | versitygw.config | object | `{}` | Versity configuration options (see above) |
+| webui | Experimental | {} | Webui |
+| webui.httpRoute.enabled | bool | `false` | use either ingress or HTTPRoute (gateway API) |
+| webui.httpRoute.hostnames | list | `["chart-example-explorer.local"]` | Hostnames matching HTTP header. |
+| webui.httpRoute.parentRefs | list | `[{"name":"gateway","sectionName":"http"}]` | Which Gateways this Route is attached to. |
+| webui.ingress.enabled | bool | `false` | use either ingress or HTTPRoute (gateway API) |
 
 
 
