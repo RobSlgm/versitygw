@@ -71,11 +71,19 @@ spec:
             {{- end }}
             {{- if .Values.webui.enabled }}
             - name: VGW_WEBUI_PORT
-              value: {{ .Values.webui.port | quote }}
+              value: {{ printf ":%v" .Values.webui.port | quote }}
             - name: VGW_WEBUI_NO_TLS
               value: "true"
             - name: VGW_CORS_ALLOW_ORIGIN
               value: "*"
+            {{- if .Values.webui.gateways.s3 }}
+            - name: VGW_WEBUI_GATEWAYS
+              value: {{ join "," .Values.webui.gateways.s3 | quote }}
+            {{- end }}
+            {{- if .Values.webui.gateways.admin }}
+            - name: VGW_WEBUI_ADMIN_GATEWAYS
+              value: {{ join "," .Values.webui.gateways.admin | quote }}
+            {{- end }}
             {{- end }}
           envFrom:
             - configMapRef:

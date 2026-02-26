@@ -2,7 +2,7 @@
 
 
 
-![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.2.0](https://img.shields.io/badge/AppVersion-v1.2.0-informational?style=flat-square) 
+![Version: 1.3.1](https://img.shields.io/badge/Version-1.3.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.3.1](https://img.shields.io/badge/AppVersion-v1.3.1-informational?style=flat-square) 
 
 [Helm chart for Versity S3 gateway to a Posix backend](https://github.com/RobSlgm/versitygw)
 
@@ -134,6 +134,8 @@ All items under `versitygw.config` are passed as enviroment variables with follo
 | versitygw.admin.s3Credentials.secretAccessKey.name | string | `"versitygw-admin-secret"` | name of secret |
 | versitygw.config | object | `{}` | Versity configuration options (see above) |
 | webui | Experimental | {} | Webui |
+| webui.gateways.admin | list | `[]` | Supply URI(s) for Admin API Endpoint |
+| webui.gateways.s3 | list | `[]` | Supply URI(s) for S3 API Endpoint |
 | webui.httpRoute.enabled | bool | `false` | use either ingress or HTTPRoute (gateway API) |
 | webui.httpRoute.hostnames | list | `["chart-example-explorer.local"]` | Hostnames matching HTTP header. |
 | webui.httpRoute.parentRefs | list | `[{"name":"gateway","sectionName":"http"}]` | Which Gateways this Route is attached to. |

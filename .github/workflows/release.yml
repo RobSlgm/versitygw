@@ -42,4 +42,4 @@ jobs:
         run: |
           REPOSITORY_OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           helm package . --version $VERSION --dependency-update
-          helm push versitygw-${VERSION}.tgz oci://${{ env.REGISTRY }}//${REPOSITORY_OWNER_LC}/${{ env.CHART_REPO }}
+          helm push versitygw-${VERSION}.tgz oci://${{ env.REGISTRY }}/${REPOSITORY_OWNER_LC}/${{ env.CHART_REPO }}

@@ -88,6 +88,11 @@ webui:
   enabled: false
   port: 7071
   type: ClusterIP
+  gateways:
+    # -- Supply URI(s) for S3 API Endpoint
+    s3: []
+    # -- Supply URI(s) for Admin API Endpoint
+    admin: []
   httpRoute:
     # -- use either ingress or HTTPRoute (gateway API)
     enabled: false
